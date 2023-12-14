@@ -13,10 +13,10 @@ public class User {
                 temporaryMap.put(column, null);
             }
         }
-        public UserBuilder addColumn(Column column, Object object)
+        public UserBuilder addColumn(Column column, Object object) throws ClassCastException
         {
-
-            temporaryMap.put(column, object);
+            //помещаемый в map объект проверяется на соответствие типу столбца, если нет - исключение ClassCastException
+            temporaryMap.put(column, column.getColumnClass().cast(object));
             return this;
         }
         public User build() { return new User(this); }
