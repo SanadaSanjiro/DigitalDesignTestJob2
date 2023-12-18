@@ -1,4 +1,4 @@
-package ru.digital.design;
+package com.digdes.school;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,7 @@ public class User {
                 temporaryMap.put(column, null);
             }
         }
-        public UserBuilder addColumn(Column column, Object object) throws ClassCastException
+        public UserBuilder addColumn(Column column, Object object)
         {
             //помещаемый в map объект проверяется на соответствие типу столбца, если нет - исключение ClassCastException
             temporaryMap.put(column, column.getColumnClass().cast(object));
@@ -21,9 +21,7 @@ public class User {
         }
         public User build() { return new User(this); }
     }
-    private User() {
-        throw new IllegalArgumentException("Wrong constructor call. Use Builder!");
-    }
+    private User() { throw new IllegalArgumentException("Wrong constructor call. Use Builder!"); }
     private User(UserBuilder builder) {
         this.map = builder.temporaryMap;
     }
