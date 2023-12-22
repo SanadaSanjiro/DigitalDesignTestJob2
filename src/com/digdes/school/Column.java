@@ -7,20 +7,18 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toMap;
 
 public enum Column {
-    ID("id", Long.class),
-    LASTNAME("lastName", String.class),
-    AGE("age", Long.class),
-    COST("cost", Double.class),
-    ACTIVE("active", Boolean.class);
+    ID(Long.class),
+    LASTNAME(String.class),
+    AGE(Long.class),
+    COST(Double.class),
+    ACTIVE(Boolean.class);
 
-    private final String columnName;
     private final Class columnClass;
 
     private static final Map<String, Column> stringToEnum = Stream.of(values()).collect(
             toMap(Object::toString, e->e));
 
-    Column(String columnName, Class columnClass) {
-        this.columnName = columnName;
+    Column(Class columnClass) {
         this.columnClass = columnClass;
     }
 
@@ -44,10 +42,4 @@ public enum Column {
         }
         return obj;
     }
-    @Override
-    public String toString() {
-        return columnName;
-    }
-
-
 }

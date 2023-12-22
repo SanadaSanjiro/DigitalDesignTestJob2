@@ -6,17 +6,8 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Operation operation;
-        for (Operation op: Operation.values()) {
-            operation = Operation.fromString(op.toString()).get();
-            System.out.println(operation.name() + ", " + operation);
-        }
+        Parcel.valueParcel(" 'lastname'   LiKE   'Федоров' ");
 
-        Column column;
-        for (Column с: Column.values()) {
-            column = Column.fromString(с.toString()).get();
-            System.out.println(column.name() + ", " + column);
-        }
 
         /*String s;
         JavaSchoolStarter jsc = new JavaSchoolStarter();
