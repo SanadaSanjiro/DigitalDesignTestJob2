@@ -1,13 +1,11 @@
 package com.digdes.school;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        Parcel.valueParcel(" 'lastname'   LiKE   'Федоров' ");
-
+        List<Block> blocks =  Parser.valuesParser("'lastName' = 'Федоров' , 'id'=3, 'age'=40, 'active'=true");
+        blocks.forEach(b-> System.out.println(b));
 
         /*String s;
         JavaSchoolStarter jsc = new JavaSchoolStarter();

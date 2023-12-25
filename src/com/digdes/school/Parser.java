@@ -1,16 +1,15 @@
 package com.digdes.school;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Parcel {
+public class Parser {
     private static Set<Character> columnCharSet = getChars(Column.class);
     private static Set<Character> operationCharSet = getChars(Operation.class);
     private static Set<Character> queryCharSet = getChars(Query.class);
     private static Set<Character> subCommandCharSet = getChars(Subcommand.class);
+    private static Set<Character> logicalOpsCharSet = getChars(LogicalOperator.class);
     private static final String VALUES_PATTERN = "'?(([\\d]+\\.?[\\d]*)|([%\\wа-яА-ЯёЁ-]+)|" +
             "(FALSE)|(TRUE))'?";
     private static final String FULL_PATTERN = " *'("
@@ -18,20 +17,34 @@ public class Parcel {
             + createRegexp(operationCharSet) + "*) *"
             + VALUES_PATTERN + " *";
     private static Pattern blockPattern = Pattern.compile(FULL_PATTERN);
-    public static User valueParcel(String string) {
+
+    public static List<Block> valuesParser(String string) {
+        String[] blocks = string.split(",");
+        List<Block> values = new ArrayList<>();
+        for (String s : blocks) {
+            values.add(blockParser(s));
+        }
+        return values;
+    }
+
+    public static List<Condition> whereParser(String string) {
+        
+    }
+
+    private static Block blockParser(String string) {
         Matcher matcher = blockPattern.matcher(string);
-        System.out.println(matcher);
         boolean isMatches = matcher.matches();
-        System.out.println(isMatches);
+        Block block;
         if (isMatches) {
             String column = matcher.group(1);
             String operation = matcher.group(2);
             String values = matcher.group(3);
-            System.out.println(column);
-            System.out.println(operation);
-            System.out.println(values);
+            Column c = getColumn(column);
+            Operation op = getOperation(operation);
+            Object val = getValue(c, values);
+            block = new Block(c, op, val);
         } else throw new IllegalArgumentException("Пошли в жопу!");
-        return null;
+        return block;
     }
 
     private static <T extends Enum> Set<Character> getChars(Class<T> enumClass) {
@@ -51,7 +64,6 @@ public class Parcel {
                 chars.add(ch);
             }
         }
-
         return chars;
     }
 
@@ -65,8 +77,16 @@ public class Parcel {
     private static Column getColumn(String string) {
         Optional<Column> result = Column.fromString(string);
         if (result.isPresent()) return result.get();
-        throw new IllegalArgumentException("Кривая жопа, блять!");
+        throw new IllegalArgumentException("Неверный тип колонки " + string);
     }
 
-    
+    private static Operation getOperation(String string) {
+        Optional<Operation> result = Operation.fromString(string.toUpperCase());
+        if (result.isPresent()) return result.get();
+        throw new IllegalArgumentException("Неверный тип операции " + string);
+    }
+
+    private static Object getValue(Column column, String string) {
+        return Column.parseValue(column, string);
+    }
 }

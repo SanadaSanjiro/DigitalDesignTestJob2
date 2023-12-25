@@ -10,8 +10,8 @@ import static java.util.stream.Collectors.toMap;
 public enum Operation {
     EQUALS("="),
     NOT_EQUALS("!="),
-    LIKE("like"),
-    ILIKE("ilike"),
+    LIKE("LIKE"),
+    ILIKE("ILIKE"),
     MORE_OR_EQUALS(">="),
     LESS_OR_EQUAL("<="),
     MORE(">"),

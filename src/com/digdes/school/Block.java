@@ -10,4 +10,25 @@ public class Block {
         value = obj;
         operation = op;
     }
+
+    public Column getColumn() {
+        return column;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    public Operation getOperation() {
+        return operation;
+    }
+
+    @Override
+    public String toString() {
+        return "Block{" +
+                "column: " + column +
+                ", operation: " + operation +
+                ", value: " + value +
+                '}';
+    }
 }

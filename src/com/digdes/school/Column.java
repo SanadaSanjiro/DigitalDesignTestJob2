@@ -27,7 +27,7 @@ public enum Column {
     }
 
     public static Optional<Column> fromString(String s) {
-        return Optional.ofNullable(stringToEnum.get(s));
+        return Optional.ofNullable(stringToEnum.get(s.toUpperCase()));
     }
 
     public static Object parseValue(Column c, String val) {
