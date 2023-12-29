@@ -4,8 +4,18 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        List<Block> blocks =  Parser.valuesParser("'lastName' = 'Федоров' , 'id'=3, 'age'=40, 'active'=true");
-        blocks.forEach(b-> System.out.println(b));
+        String string = "'lastName' = 'Федоров' " +
+                "and 'lastName' ilike '%п%' oR 'active'=true  ";
+        System.out.println(string);
+        List<Condition> list =  Parser.whereParser(string);
+        list.forEach(c -> System.out.println(c));
+        string = "'lastName' = 'Федоров' ";
+        System.out.println(string);
+        list =  Parser.whereParser(string);
+        list.forEach(c -> System.out.println(c));
+        
+        /*List<Block> blocks =  Parser.valuesParser("'lastName' = 'Федоров' , 'id'=3, 'age'=40, 'active'=true");
+        blocks.forEach(b-> System.out.println(b));*/
 
         /*String s;
         JavaSchoolStarter jsc = new JavaSchoolStarter();

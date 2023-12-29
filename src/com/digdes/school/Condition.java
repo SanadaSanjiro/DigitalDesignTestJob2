@@ -3,7 +3,7 @@ package com.digdes.school;
 public class Condition {
     private final LogicalOperator logical;
     private final Block block;
-    private Condition(LogicalOperator lo, Block b) {
+    public Condition(LogicalOperator lo, Block b) {
         logical = lo;
         block = b;
     }
