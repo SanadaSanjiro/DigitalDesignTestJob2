@@ -1,6 +1,8 @@
 package com.digdes.school;
 
-public enum Subcommand {
-    VALUES,
-    WHERE
+import java.util.List;
+import java.util.Map;
+
+public interface Subcommand {
+    public String process (String s);
 }

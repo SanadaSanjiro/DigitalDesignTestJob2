@@ -8,7 +8,7 @@ public class Parser {
     private static Set<Character> columnCharSet = getChars(Column.class);
     private static Set<Character> operationCharSet = getChars(Operation.class);
     private static Set<Character> queryCharSet = getChars(Query.class);
-    private static Set<Character> subCommandCharSet = getChars(Subcommand.class);
+    private static Set<Character> subCommandCharSet = getChars(SubQuery.class);
     private static Set<Character> logicalOpsCharSet = getChars(LogicalOperator.class);
     private static final String VALUES_PATTERN = "'?(([\\d]+\\.?[\\d]*)|([%\\wа-яА-ЯёЁ-]+)|" +
             "(FALSE)|(TRUE))'?";
@@ -67,6 +67,14 @@ public class Parser {
 
         }
         return conditions;
+    }
+
+    public static String getArgsString(String[] s) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i<s.length; i++) {
+            sb.append(s[i]).append(" ");
+        }
+        return sb.toString();
     }
 
     private static Block blockParser(String string) {

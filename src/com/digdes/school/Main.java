@@ -1,9 +1,19 @@
 package com.digdes.school;
 
 import java.util.List;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
+        JavaSchoolStarter jvs = new JavaSchoolStarter();
+        String request = "Insert VALuES  'lastName' = 'Федоров' , 'id'=3, 'age'=40, 'active'=true";
+        try {
+            List<Map<String, Object>> list = jvs.execute(request);
+            list.forEach(m-> System.out.println(m));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        /*
         String string = "'lastName' = 'Федоров' " +
                 "and 'lastName' ilike '%п%' oR 'active'=true  ";
         System.out.println(string);
@@ -13,8 +23,8 @@ public class Main {
         System.out.println(string);
         list =  Parser.whereParser(string);
         list.forEach(c -> System.out.println(c));
-        
-        /*List<Block> blocks =  Parser.valuesParser("'lastName' = 'Федоров' , 'id'=3, 'age'=40, 'active'=true");
+
+        List<Block> blocks =  Parser.valuesParser("'lastName' = 'Федоров' , 'id'=3, 'age'=40, 'active'=true");
         blocks.forEach(b-> System.out.println(b));*/
 
         /*String s;

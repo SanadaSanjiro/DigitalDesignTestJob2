@@ -29,6 +29,4 @@ public class Storage {
     public List<Map<String, Object>> get() {
         return list;
     }
-
-
 }
