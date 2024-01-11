@@ -3,8 +3,8 @@ package com.digdes.school;
 public class Block {
     private final Column column;
     private final Object value;
-    private final Operation operation;
-    public Block(Column c, Operation op, Object obj) {
+    private final LogicalFilter operation;
+    public Block(Column c, LogicalFilter op, Object obj) {
         column = c;
         value = obj;
         operation = op;
@@ -18,7 +18,7 @@ public class Block {
         return value;
     }
 
-    public Operation getOperation() {
+    public LogicalFilter getOperation() {
         return operation;
     }
 

@@ -18,7 +18,7 @@ public enum Query implements Command {
                 throw new IllegalArgumentException("Неверная строка параметров в запросе Insert!");
             User.UserBuilder userBuilder = new User.UserBuilder();
             for (Block block : blocks) {
-                if (!block.getOperation().equals(Operation.EQUALS))
+                if (!block.getOperation().equals(LogicalFilter.EQUALS))
                     throw new IllegalArgumentException("Неверная строка параметров в запросе Insert!");
                 userBuilder.addColumn(block.getColumn(), block.getValue());
             }

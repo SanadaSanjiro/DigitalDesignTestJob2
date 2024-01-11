@@ -1,5 +1,7 @@
 package com.digdes.school;
 
+import jdk.dynalink.Operation;
+
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +15,54 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        int[] numbers = {1,2,3,4,5};
+        for(LogicalFilter filter : LogicalFilter.values()) {
+            for (int i : numbers) {
+                try {
+                    boolean b = filter.applyFilter(3, i);
+                    System.out.println(i + filter.toString() + "3: " + b);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        double[] doubles = {0.1,0.2,0.3,0.4,0.5};
+        for(LogicalFilter filter : LogicalFilter.values()) {
+            for (double d : doubles) {
+                try {
+                    boolean b = filter.applyFilter(.3, d);
+                    System.out.println(d + filter.toString() + ": " + b);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         /*
+        String[] testStings = {
+                "%Жопа 123%",
+                "Жопа 123%",
+                "%Жопа 123",
+                "Жопа 123"
+        };
+
+        String[] values = {
+                "Жопа 123",
+                "абыр Жопа 123",
+                "Жопа 123 абыр",
+                "абыр Жопа 123 абыр"
+        };
+        WildcardType wc;
+        for (String s : testStings) {
+            wc = WildcardType.getWildcardType(s);
+            System.out.println("Условие = " + s);
+            for (String v : values) {
+                System.out.println("Проверка строки " + v + ": " +
+                        wc.matches(s, v));
+            }
+        }
         String string = "'lastName' = 'Федоров' " +
                 "and 'lastName' ilike '%п%' oR 'active'=true  ";
         System.out.println(string);

@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 public class Parser {
     private static Set<Character> columnCharSet = getChars(Column.class);
-    private static Set<Character> operationCharSet = getChars(Operation.class);
+    private static Set<Character> operationCharSet = getChars(LogicalFilter.class);
     private static Set<Character> queryCharSet = getChars(Query.class);
     private static Set<Character> subCommandCharSet = getChars(SubQuery.class);
     private static Set<Character> logicalOpsCharSet = getChars(LogicalOperator.class);
@@ -86,7 +86,7 @@ public class Parser {
             String operation = matcher.group(2);
             String values = matcher.group(3);
             Column c = getColumn(column);
-            Operation op = getOperation(operation);
+            LogicalFilter op = getOperation(operation);
             Object val = getValue(c, values);
             block = new Block(c, op, val);
         } else throw new IllegalArgumentException("Пошли в жопу!");
@@ -126,8 +126,8 @@ public class Parser {
         throw new IllegalArgumentException("Неверный тип колонки " + string);
     }
 
-    private static Operation getOperation(String string) {
-        Optional<Operation> result = Operation.fromString(string.toUpperCase());
+    private static LogicalFilter getOperation(String string) {
+        Optional<LogicalFilter> result = LogicalFilter.fromString(string.toUpperCase());
         if (result.isPresent()) return result.get();
         throw new IllegalArgumentException("Неверный тип операции " + string);
     }
