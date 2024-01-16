@@ -28,6 +28,7 @@ public class Parser {
     }
 
     public static List<Condition> whereParser(String string) {
+        string = SubQuery.WHERE.process(string);
         List<Condition> conditions = new ArrayList<>();
         String logicalRegexp = " ?" + createRegexp(logicalOpsCharSet) + "+ ?";
         Pattern logicalPattern = Pattern.compile(logicalRegexp);
@@ -133,6 +134,6 @@ public class Parser {
     }
 
     private static Object getValue(Column column, String string) {
-        return Column.parseValue(column, string);
+        return column.apply(string);
     }
 }

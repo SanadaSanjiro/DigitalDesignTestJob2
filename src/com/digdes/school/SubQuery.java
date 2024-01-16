@@ -11,7 +11,10 @@ public enum SubQuery implements Subcommand {
     },
     WHERE {
         public String process(String s) {
-            return s;
+            String[] args = s.trim().split(" ");
+            if (!args[0].toUpperCase().equals(this.toString()))
+                throw new IllegalArgumentException("Неверный формат команды. Отсутствует WHERE");
+            return Parser.getArgsString(args);
         }
     }
 }

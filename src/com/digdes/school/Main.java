@@ -2,20 +2,37 @@ package com.digdes.school;
 
 import jdk.dynalink.Operation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
         JavaSchoolStarter jvs = new JavaSchoolStarter();
-        String request = "Insert VALuES  'lastName' = 'Федоров' , 'id'=3, 'age'=40, 'active'=true";
+        String[] requests = { "Insert VALuES  'lastName' = 'Федоров' , 'id'=3, 'age'=40, 'active'=true",
+                              "Insert VALuES  'lastName' = 'Петров' , 'id'=3, 'age'=30, 'active'=false, 'cost'=10.1",
+                              "Insert VALuES  'lastName' = 'Васечкин' , 'id'=2, 'age'=20, 'active'=false, 'cost' = 0.5",
+                              "Insert VALuES  'lastName' = 'Иванов' , 'age'=35, 'active'=true, 'cost'=3.0"};
         try {
-            List<Map<String, Object>> list = jvs.execute(request);
+            List<Map<String, Object>> list = new ArrayList<>();
+            for (String request: requests) {
+                list.addAll(jvs.execute(request));
+            }
+            list.forEach(m-> System.out.println(m));
+            List<Block> blocks =  Parser.valuesParser("'lastName' like '%ин'");
+            list = Processor.filterList(list, blocks.get(0));
+            System.out.println("Processed list:");
             list.forEach(m-> System.out.println(m));
         } catch (Exception e) {
             e.printStackTrace();
         }
+        List<Block> blocks =  Parser.valuesParser("'lastName' = 'Федоров'");
 
+
+        /*
+        System.out.println(Parser.whereParser("WHERE 'age'>=30 and 'id'=3"));
+
+        /*
         int[] numbers = {1,2,3,4,5};
         for(LogicalFilter filter : LogicalFilter.values()) {
             for (int i : numbers) {

@@ -9,9 +9,11 @@ public class User {
     {
         private final Map<Column, Object> temporaryMap = new HashMap<>();
         public UserBuilder() {
+            /*
             for (Column column : Column.values()) {
                 temporaryMap.put(column, null);
             }
+             */
         }
         public UserBuilder addColumn(Column column, Object object)
         {

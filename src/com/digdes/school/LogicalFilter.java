@@ -1,6 +1,7 @@
 package com.digdes.school;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -10,18 +11,19 @@ public enum LogicalFilter implements Filter {
     EQUALS("=") {
         @Override
         public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
-            return (value.compareTo(condition)==0);
+            return Objects.isNull(value) ? false : value.compareTo(condition)==0;
         }
     },
     NOT_EQUALS("!=") {
         @Override
         public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
-            return (value.compareTo(condition)!=0);
+            return Objects.isNull(value) ? true : value.compareTo(condition)!=0;
         }
     },
     LIKE("LIKE") {
         @Override
         public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
+            if (Objects.isNull(value)) return false;
             String c = (String) condition;
             String v = (String) value;
             WildcardType wt = WildcardType.getWildcardType(c);
@@ -31,6 +33,7 @@ public enum LogicalFilter implements Filter {
     ILIKE("ILIKE") {
         @Override
         public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
+            if (Objects.isNull(value)) return false;
             String c = (String) condition;
             String v = (String) value;
             WildcardType wt = WildcardType.getWildcardType(c);
@@ -40,25 +43,25 @@ public enum LogicalFilter implements Filter {
     MORE_OR_EQUALS(">="){
         @Override
         public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
-            return (value.compareTo(condition)>=0);
+            return Objects.isNull(value) ? false : value.compareTo(condition)>=0;
         }
     },
     LESS_OR_EQUAL("<=") {
         @Override
         public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
-            return (value.compareTo(condition)<=0);
+            return Objects.isNull(value) ? false : value.compareTo(condition)<=0;
         }
     },
     MORE(">"){
         @Override
         public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
-            return (value.compareTo(condition)>0);
+            return Objects.isNull(value) ? false : value.compareTo(condition)>0;
         }
     },
     LESS("<"){
         @Override
         public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
-            return (value.compareTo(condition)<0);
+            return Objects.isNull(value) ? false : value.compareTo(condition)<0;
         }
     };
 
