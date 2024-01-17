@@ -2,7 +2,6 @@ package com.digdes.school;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -12,28 +11,47 @@ public enum Query implements Command {
     INSERT {
         @Override
         public List<Map<String, Object>> execute(Storage storage, String args) {
-            args = SubQuery.VALUES.process(args);
-            List<Block> blocks = Parser.valuesParser(args);
-            if (Objects.isNull(blocks))
-                throw new IllegalArgumentException("Неверная строка параметров в запросе Insert!");
+            Map<SubQuery, String> subQueries = SubQuery.processSubQuery(args);
+            if (!subQueries.containsKey(SubQuery.VALUES))
+                throw new IllegalArgumentException("Ошибка запроса Insert. " +
+                    "Отсутствует обязательный параметр VALUES");
+            if (subQueries.containsKey(SubQuery.WHERE))
+                throw new IllegalArgumentException("Ошибка запроса Insert. " +
+                        "Параметр WHERE недопустим в данном контексте");
+            args = subQueries.get(SubQuery.VALUES);
+            List<Block> blocks = Parser.parseBlocks(args);
+            if (blocks.isEmpty())
+                throw new IllegalArgumentException("Ошибка запроса Insert. " +
+                        "Данные не найдены.");
             User.UserBuilder userBuilder = new User.UserBuilder();
             for (Block block : blocks) {
-                if (!block.getOperation().equals(LogicalFilter.EQUALS))
-                    throw new IllegalArgumentException("Неверная строка параметров в запросе Insert!");
+                if (!block.getFilter().equals(LogicalFilter.EQUALS))
+                    throw new IllegalArgumentException("Ошибка запроса Insert. " +
+                            "Данные должны быть в формате 'поле' = значение");
                 userBuilder.addColumn(block.getColumn(), block.getValue());
             }
-            return storage.addRow(userBuilder.build());
+            return storage.add(userBuilder.build());
         }
     },
     DELETE {
         @Override
         public List<Map<String, Object>> execute(Storage storage, String args) {
+            Map<SubQuery, String> subQueries = SubQuery.processSubQuery(args);
+            if (subQueries.containsKey(SubQuery.VALUES))
+                throw new IllegalArgumentException("Ошибка запроса Delete. " +
+                        "Параметр VALUES недопустим в данном контексте");
+            if (!subQueries.containsKey(SubQuery.WHERE)) return storage.deleteAll();
             return null;
         }
     },
     SELECT {
         @Override
         public List<Map<String, Object>> execute(Storage storage, String args) {
+            Map<SubQuery, String> subQueries = SubQuery.processSubQuery(args);
+            if (subQueries.containsKey(SubQuery.VALUES))
+                throw new IllegalArgumentException("Ошибка запроса Select. " +
+                        "Параметр VALUES недопустим в данном контексте");
+            if (!subQueries.containsKey(SubQuery.WHERE)) return storage.getAll();
             return null;
         }
     },
@@ -44,8 +62,14 @@ public enum Query implements Command {
         }
     };
 
-    public static List<Map<String, Object>> parseQuery(Storage s, Query q, String request) {
-        return q.execute(s, request);
+    public static List<Map<String, Object>> processQuery(Storage storage, String request) {
+        String[] splitReq = request.trim().split(" ");
+        Optional<Query> optional = Query.fromString(splitReq[0]);
+        if (optional.isEmpty()) throw new IllegalArgumentException("Неопознанная команда!");
+        Query query = optional.get();
+        request=request.substring(query.toString().length());
+        System.out.println("Выполняется команда: " + query + " " + request);
+        return query.execute(storage, request);
     }
 
     public static Optional<Query> fromString(String s) {
@@ -54,5 +78,4 @@ public enum Query implements Command {
 
     private static final Map<String, Query> stringToEnum = Stream.of(values()).collect(
             toMap(Object::toString, e->e));
-
 }

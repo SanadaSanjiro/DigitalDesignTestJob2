@@ -3,17 +3,14 @@ package com.digdes.school;
 import java.util.HashMap;
 import java.util.Map;
 
+//Промежуточный класс с данными сотрудника
+//Используется для парсинга строк, предоставляя заполненный Map для последующей обработки и внесения в базу
 public class User {
     private final Map<Column, Object> map;
     public static class UserBuilder
     {
         private final Map<Column, Object> temporaryMap = new HashMap<>();
         public UserBuilder() {
-            /*
-            for (Column column : Column.values()) {
-                temporaryMap.put(column, null);
-            }
-             */
         }
         public UserBuilder addColumn(Column column, Object object)
         {

@@ -1,23 +1,21 @@
 package com.digdes.school;
 
-import jdk.dynalink.Operation;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
+// ENUM определяет перечень допустимых команд и способы их выполнения
 public class Processor {
-    public static <T extends Comparable<T>> List<Map<String, Object>> filterList(List<Map<String, Object>> list, Block block) {
+    public static <T extends Comparable<T>> List<Map<String, Object>> filterList(List<Map<String, Object>>
+                                                                                         list, Block block)
+    {
         List<Map<String, Object>> result = new ArrayList<>();
         Column column = block.getColumn();
-        Object condition = block.getValue();
-        T processedCond = Column.castValue(column, condition);
-        LogicalFilter logicalFilter = block.getOperation();
+        T condition = Column.castValue(column, block.getValue());
+        LogicalFilter filter = block.getFilter();
         for (Map<String, Object> map : list) {
-            Object val =  map.get(column.toString());
-            T processedVal = Column.castValue(column, val);
-            boolean b =  logicalFilter.applyFilter(processedCond, processedVal);
+            T value = Column.castValue(column, map.get(column.toString()));
+            boolean b =  filter.applyFilter(condition, value);
             if (b) result.add(map);
         }
 

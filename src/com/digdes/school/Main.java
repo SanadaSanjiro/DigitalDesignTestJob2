@@ -1,32 +1,51 @@
 package com.digdes.school;
 
-import jdk.dynalink.Operation;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
         JavaSchoolStarter jvs = new JavaSchoolStarter();
-        String[] requests = { "Insert VALuES  'lastName' = 'Федоров' , 'id'=3, 'age'=40, 'active'=true",
+        String[] requests = { "Insert VALUES  'lastName' = 'Федоров' , 'id'=3, 'age'=40, 'active'=true",
                               "Insert VALuES  'lastName' = 'Петров' , 'id'=3, 'age'=30, 'active'=false, 'cost'=10.1",
                               "Insert VALuES  'lastName' = 'Васечкин' , 'id'=2, 'age'=20, 'active'=false, 'cost' = 0.5",
-                              "Insert VALuES  'lastName' = 'Иванов' , 'age'=35, 'active'=true, 'cost'=3.0"};
-        try {
-            List<Map<String, Object>> list = new ArrayList<>();
-            for (String request: requests) {
-                list.addAll(jvs.execute(request));
+                              "Insert VALuES  'lastName' = 'Иванов' , 'age'=35, 'active'=true, 'cost'=3.0 "};
+        List<Map<String, Object>> list;
+        for (String request: requests) {
+            try {
+                list = jvs.execute(request);
+                list.forEach(m-> System.out.println(m));
+            } catch (Exception e) {
+                System.out.println(e);
             }
-            list.forEach(m-> System.out.println(m));
-            List<Block> blocks =  Parser.valuesParser("'lastName' like '%ин'");
-            list = Processor.filterList(list, blocks.get(0));
-            System.out.println("Processed list:");
+        }
+        System.out.println(System.lineSeparator());
+        System.out.println("Лист после вставки строк");
+        try {
+            list = jvs.execute("select");
             list.forEach(m-> System.out.println(m));
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
-        List<Block> blocks =  Parser.valuesParser("'lastName' = 'Федоров'");
+        /*
+        list.forEach(m-> System.out.println(m));
+        List<Block> blocks =  Parser.parseBlocks("'lastName' like '%ин'");
+        list = Processor.filterList(list, blocks.get(0));
+        System.out.println("Processed list:");
+        list.forEach(m-> System.out.println(m));
+        */
+        try {
+            list=jvs.execute("delete");
+            list.forEach(m-> System.out.println(m));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        try {
+            list = jvs.execute("select");
+            list.forEach(m-> System.out.println(m));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
 
 
         /*

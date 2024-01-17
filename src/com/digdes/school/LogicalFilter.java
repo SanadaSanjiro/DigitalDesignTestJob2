@@ -11,13 +11,13 @@ public enum LogicalFilter implements Filter {
     EQUALS("=") {
         @Override
         public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
-            return Objects.isNull(value) ? false : value.compareTo(condition)==0;
+            return !Objects.isNull(value) && value.compareTo(condition)==0;
         }
     },
     NOT_EQUALS("!=") {
         @Override
         public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
-            return Objects.isNull(value) ? true : value.compareTo(condition)!=0;
+            return Objects.isNull(value) || value.compareTo(condition)!=0;
         }
     },
     LIKE("LIKE") {
@@ -43,25 +43,25 @@ public enum LogicalFilter implements Filter {
     MORE_OR_EQUALS(">="){
         @Override
         public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
-            return Objects.isNull(value) ? false : value.compareTo(condition)>=0;
+            return !Objects.isNull(value) && value.compareTo(condition)>=0;
         }
     },
     LESS_OR_EQUAL("<=") {
         @Override
         public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
-            return Objects.isNull(value) ? false : value.compareTo(condition)<=0;
+            return !Objects.isNull(value) && value.compareTo(condition)<=0;
         }
     },
     MORE(">"){
         @Override
         public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
-            return Objects.isNull(value) ? false : value.compareTo(condition)>0;
+            return !Objects.isNull(value) && value.compareTo(condition)>0;
         }
     },
     LESS("<"){
         @Override
         public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
-            return Objects.isNull(value) ? false : value.compareTo(condition)<0;
+            return !Objects.isNull(value) && value.compareTo(condition)<0;
         }
     };
 

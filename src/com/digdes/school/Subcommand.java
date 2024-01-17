@@ -1,8 +1,7 @@
 package com.digdes.school;
 
-import java.util.List;
-import java.util.Map;
-
+// Описывает обработку дополнительных операторов в запросах
+// Реализован в Enum SubQuery
 public interface Subcommand {
-    public String process (String s);
+    String process (String s);
 }

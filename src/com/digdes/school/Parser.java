@@ -18,11 +18,11 @@ public class Parser {
             + VALUES_PATTERN + " *";
     private static Pattern blockPattern = Pattern.compile(FULL_PATTERN);
 
-    public static List<Block> valuesParser(String string) {
+    public static List<Block> parseBlocks(String string) {
         String[] blocks = string.split(",");
         List<Block> values = new ArrayList<>();
         for (String s : blocks) {
-            values.add(blockParser(s));
+            values.add(getBlock(s));
         }
         return values;
     }
@@ -45,7 +45,7 @@ public class Parser {
             start = blockMatcher.start();
             end = blockMatcher.end();
             substring = string.substring(blockMatcher.start(), blockMatcher.end());
-            Block block = blockParser(substring);
+            Block block = getBlock(substring);
             string = string.replaceFirst(substring, "");
             logicalMatcher = logicalPattern.matcher(string);
             if (logicalMatcher.find()) {
@@ -78,7 +78,7 @@ public class Parser {
         return sb.toString();
     }
 
-    private static Block blockParser(String string) {
+    private static Block getBlock(String string) {
         Matcher matcher = blockPattern.matcher(string);
         boolean isMatches = matcher.matches();
         Block block;
@@ -90,7 +90,7 @@ public class Parser {
             LogicalFilter op = getOperation(operation);
             Object val = getValue(c, values);
             block = new Block(c, op, val);
-        } else throw new IllegalArgumentException("Пошли в жопу!");
+        } else throw new IllegalArgumentException("Ошибка обработки блока команды: " + string);
         return block;
     }
 
