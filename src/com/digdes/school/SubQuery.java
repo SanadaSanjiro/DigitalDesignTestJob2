@@ -27,7 +27,7 @@ public enum SubQuery implements Subcommand {
         query=query.trim();
         Map<SubQuery, String> result = new EnumMap<>(SubQuery.class);
         int whereStart = query.toUpperCase().indexOf(WHERE.toString());
-        if (whereStart>0) {
+        if (whereStart==-1) {
             result.put(WHERE, WHERE.process(query.substring(whereStart)));
             query=query.substring(0, whereStart);
         }

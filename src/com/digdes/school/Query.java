@@ -51,8 +51,12 @@ public enum Query implements Command {
             if (subQueries.containsKey(SubQuery.VALUES))
                 throw new IllegalArgumentException("Ошибка запроса Select. " +
                         "Параметр VALUES недопустим в данном контексте");
-            if (!subQueries.containsKey(SubQuery.WHERE)) return storage.getAll();
-            return null;
+            if (!subQueries.containsKey(SubQuery.WHERE)) {
+                System.out.println("Запрос Select без Where");
+                return storage.getAll();
+            }
+            return Processor.processLogicalList(storage.getAll(),
+                    Parser.whereParser(subQueries.get(SubQuery.WHERE)));
         }
     },
     UPDATE {

@@ -33,15 +33,16 @@ public class Main {
         list = Processor.filterList(list, blocks.get(0));
         System.out.println("Processed list:");
         list.forEach(m-> System.out.println(m));
-        */
+
         try {
             list=jvs.execute("delete");
             list.forEach(m-> System.out.println(m));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+         */
         try {
-            list = jvs.execute("select");
+            list = jvs.execute("select where 'id'!=3");
             list.forEach(m-> System.out.println(m));
         } catch (Exception e) {
             System.out.println(e.getMessage());
