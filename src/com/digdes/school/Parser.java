@@ -28,7 +28,6 @@ public class Parser {
     }
 
     public static List<Condition> whereParser(String string) {
-        string = SubQuery.WHERE.process(string);
         List<Condition> conditions = new ArrayList<>();
         String logicalRegexp = " ?" + createRegexp(logicalOpsCharSet) + "+ ?";
         Pattern logicalPattern = Pattern.compile(logicalRegexp);
@@ -45,16 +44,19 @@ public class Parser {
             start = blockMatcher.start();
             end = blockMatcher.end();
             substring = string.substring(blockMatcher.start(), blockMatcher.end());
+            System.out.println("Substring = " + substring);
             Block block = getBlock(substring);
             string = string.replaceFirst(substring, "");
+            System.out.println("String = " + string);
             logicalMatcher = logicalPattern.matcher(string);
+            System.out.println("LogicalMatcher" + logicalMatcher);
             if (logicalMatcher.find()) {
                 start = logicalMatcher.start();
                 end = logicalMatcher.end();
                 substring = string.substring(start, end);
                 string = string.replaceFirst(substring, "");
                 optional = LogicalOperator.fromString(substring.trim());
-                lo = optional.get();
+                lo = optional.isPresent() ? optional.get() : null;
                 condition = new Condition(lo, block);
                 conditions.add(condition);
                 string = string.replaceFirst(substring, "");
@@ -65,7 +67,6 @@ public class Parser {
                 return conditions;
                 }
             blockMatcher = blockPattern.matcher(string);
-
         }
         return conditions;
     }

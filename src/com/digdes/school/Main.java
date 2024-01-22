@@ -41,10 +41,14 @@ public class Main {
             System.out.println(e.getMessage());
         }
          */
+        System.out.println(System.lineSeparator());
+
         try {
-            list = jvs.execute("select where 'id'!=3");
+            list = jvs.execute("select where 'id'=3 and 'age' > 20 and 'age' < 40");
+            System.out.println("Результат запроса:");
             list.forEach(m-> System.out.println(m));
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println(e.getMessage());
         }
 

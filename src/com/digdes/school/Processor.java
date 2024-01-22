@@ -22,7 +22,7 @@ public class Processor {
     public static <T extends Comparable<T>> List<Map<String, Object>>
     processLogicalList (List<Map<String, Object>> userList, List<Condition> condList) {
         Iterator<Condition> iterator = condList.iterator();
-        return processLogical(userList, userList,iterator);
+        return processLogical(userList, userList, iterator);
     }
 
     private static List<Map<String, Object>> processLogical(
@@ -31,19 +31,32 @@ public class Processor {
             Iterator<Condition> iterator)
     {
         Condition condition = iterator.next();
-        System.out.println("Логический процессор обрабатывает строку " + condition);
         Block block = condition.getBlock();
         LogicalOperator lo = condition.getLogical();
         List<Map<String, Object>> result = filterList(processedList, block);
         if (Objects.isNull(lo)) {
+            System.out.println("Condition: " + condition);
+            System.out.println("Результат обработки логического блока: \n" + result );
             return result;
         }
         if (lo.equals(LogicalOperator.OR)) {
-            result.addAll(processLogical(fullList, fullList, iterator));
+            result = joinLists(processedList, processLogical(fullList, fullList, iterator));
         }
         if (lo.equals(LogicalOperator.AND)) {
-            result.addAll(processLogical(fullList, result, iterator));
+            result = processLogical(fullList, result, iterator);
         }
+        System.out.println("Condition: " + condition);
+        System.out.println("Результат обработки логического блока: \n" + result );
         return result;
+    }
+
+    private static List<Map<String, Object>> joinLists(List<Map<String, Object>> list1, List<Map<String, Object>>list2)
+    {
+        for (Map<String, Object> map : list2) {
+            if (!list1.contains(map)) {
+                list1.add(map);
+            }
+        }
+        return list1;
     }
 }

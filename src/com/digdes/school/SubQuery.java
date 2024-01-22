@@ -16,7 +16,8 @@ public enum SubQuery implements Subcommand {
     WHERE {
         public String process(String s) {
             String[] args = s.trim().split(" ");
-            if (!args[0].toUpperCase().equals(this.toString()))
+            boolean isThereWhere = args[0].toUpperCase().equals(this.toString());
+            if (!isThereWhere)
                 throw new IllegalArgumentException("Неверный формат команды. Отсутствует WHERE");
             return Parser.getArgsString(args);
         }
@@ -27,7 +28,7 @@ public enum SubQuery implements Subcommand {
         query=query.trim();
         Map<SubQuery, String> result = new EnumMap<>(SubQuery.class);
         int whereStart = query.toUpperCase().indexOf(WHERE.toString());
-        if (whereStart==-1) {
+        if (!(whereStart==-1)) {
             result.put(WHERE, WHERE.process(query.substring(whereStart)));
             query=query.substring(0, whereStart);
         }
