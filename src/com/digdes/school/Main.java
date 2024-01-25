@@ -6,8 +6,8 @@ import java.util.Map;
 public class Main {
     public static void main(String[] args) {
         JavaSchoolStarter jvs = new JavaSchoolStarter();
-        String[] requests = { "Insert VALUES  'lastName' = 'Федоров' , 'id'=3, 'age'=40, 'active'=true",
-                              "Insert VALuES  'lastName' = 'Петров' , 'id'=3, 'age'=30, 'active'=false, 'cost'=10.1",
+        String[] requests = { "Insert VALUES  'lastName' = 'Федоров' , 'id'=3, 'age'=40, 'active'=TRUE",
+                              "Insert VALuES  'lastName' = 'Петров' , 'id'=3, 'age'=30, 'active'=FALSE, 'cost'=10.1",
                               "Insert VALuES  'lastName' = 'Васечкин' , 'id'=2, 'age'=20, 'active'=false, 'cost' = 0.5",
                               "Insert VALuES  'lastName' = 'Иванов' , 'age'=35, 'active'=true, 'cost'=3.0 "};
         List<Map<String, Object>> list;
@@ -44,7 +44,7 @@ public class Main {
         System.out.println(System.lineSeparator());
 
         try {
-            list = jvs.execute("select where 'id'=3 and 'age' > 20 and 'age' < 40");
+            list = jvs.execute("select where 'lastname' LIKE '%сечки%' and 'active' = false and 'id' = 2");
             System.out.println("Результат запроса:");
             list.forEach(m-> System.out.println(m));
         } catch (Exception e) {

@@ -18,6 +18,7 @@ public enum WildcardType {
     }
     //Метод возвращает enum, соответствующий строке запроса
     public static WildcardType getWildcardType(String condition) {
+        condition = condition.replaceAll("'", "");
         for(WildcardType wt : WildcardType.values()) {
             if (condition.matches(wt.REGEXP)) return wt;
         }
@@ -33,9 +34,19 @@ public enum WildcardType {
         throw new IllegalArgumentException("Неверный формат запроса строкового параметра");
     }
 
+    public String getPrefix() {
+        return PREFIX;
+    }
+
+    public String getSuffix() {
+        return SUFFIX;
+    }
+
     //Метод проверяет соответствие поступившей строки шаблону, заданному в данном enum
-    public boolean matches(String request, String value) {
-        String rx = PREFIX + getPattern(request) + SUFFIX;
+    public static boolean matches(WildcardType wc,String condition, String value) {
+        condition = condition.replaceAll("%", "").replaceAll("'", "");
+        value = value.replaceAll("'", "");
+        String rx = wc.getPrefix() + condition + wc.getSuffix();
         return value.matches(rx);
     }
 }

@@ -27,7 +27,7 @@ public enum LogicalFilter implements Filter {
             String c = (String) condition;
             String v = (String) value;
             WildcardType wt = WildcardType.getWildcardType(c);
-            return wt.matches(c, v);
+            return WildcardType.matches(wt, c,v);
         }
     },
     ILIKE("ILIKE") {
@@ -37,7 +37,7 @@ public enum LogicalFilter implements Filter {
             String c = (String) condition;
             String v = (String) value;
             WildcardType wt = WildcardType.getWildcardType(c);
-            return wt.matches(c.toLowerCase(), v.toLowerCase());
+            return WildcardType.matches(wt, c.toLowerCase(), v.toLowerCase());
         }
     },
     MORE_OR_EQUALS(">="){
@@ -77,7 +77,6 @@ public enum LogicalFilter implements Filter {
     public static Optional<LogicalFilter> fromString(String s) {
         return Optional.ofNullable(stringToEnum.get(s));
     }
-
 
     @Override
     public String toString() {

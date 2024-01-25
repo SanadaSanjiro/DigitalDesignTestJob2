@@ -3,20 +3,16 @@ package com.digdes.school;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Parser {
-    private static Set<Character> columnCharSet = getChars(Column.class);
-    private static Set<Character> operationCharSet = getChars(LogicalFilter.class);
-    private static Set<Character> queryCharSet = getChars(Query.class);
-    private static Set<Character> subCommandCharSet = getChars(SubQuery.class);
-    private static Set<Character> logicalOpsCharSet = getChars(LogicalOperator.class);
-    private static final String VALUES_PATTERN = "'?(([\\d]+\\.?[\\d]*)|([%\\wа-яА-ЯёЁ-]+)|" +
+    private static final String VALUES_PATTERN = "(?i)'?((\\d+\\.?\\d*)|('[%\\wа-яА-ЯёЁ-]+')|" +
             "(FALSE)|(TRUE))'?";
     private static final String FULL_PATTERN = " *'("
-            + createRegexp(columnCharSet) + "*)' *("
-            + createRegexp(operationCharSet) + "*) *"
+            + getEnumPattern(Column.class) + "*)' *("
+            + getEnumPattern(LogicalFilter.class) + "*) *"
             + VALUES_PATTERN + " *";
-    private static Pattern blockPattern = Pattern.compile(FULL_PATTERN);
+    private static final Pattern blockPattern = Pattern.compile(FULL_PATTERN);
 
     public static List<Block> parseBlocks(String string) {
         String[] blocks = string.split(",");
@@ -29,7 +25,7 @@ public class Parser {
 
     public static List<Condition> whereParser(String string) {
         List<Condition> conditions = new ArrayList<>();
-        String logicalRegexp = " ?" + createRegexp(logicalOpsCharSet) + "+ ?";
+        String logicalRegexp = " ?" + getEnumPattern(LogicalOperator.class) + "+ ?";
         Pattern logicalPattern = Pattern.compile(logicalRegexp);
         Matcher logicalMatcher;
         Matcher blockMatcher = blockPattern.matcher(string);
@@ -43,20 +39,16 @@ public class Parser {
         while (blockMatcher.find()) {
             start = blockMatcher.start();
             end = blockMatcher.end();
-            substring = string.substring(blockMatcher.start(), blockMatcher.end());
-            System.out.println("Substring = " + substring);
+            substring = string.substring(start, end);
             Block block = getBlock(substring);
             string = string.replaceFirst(substring, "");
-            System.out.println("String = " + string);
             logicalMatcher = logicalPattern.matcher(string);
-            System.out.println("LogicalMatcher" + logicalMatcher);
             if (logicalMatcher.find()) {
                 start = logicalMatcher.start();
                 end = logicalMatcher.end();
                 substring = string.substring(start, end);
-                string = string.replaceFirst(substring, "");
                 optional = LogicalOperator.fromString(substring.trim());
-                lo = optional.isPresent() ? optional.get() : null;
+                lo = optional.orElse(null);
                 condition = new Condition(lo, block);
                 conditions.add(condition);
                 string = string.replaceFirst(substring, "");
@@ -86,40 +78,13 @@ public class Parser {
         if (isMatches) {
             String column = matcher.group(1);
             String operation = matcher.group(2);
-            String values = matcher.group(3);
+            String value = matcher.group(3);
             Column c = getColumn(column);
             LogicalFilter op = getOperation(operation);
-            Object val = getValue(c, values);
+            Object val = getValue(c, value);
             block = new Block(c, op, val);
         } else throw new IllegalArgumentException("Ошибка обработки блока команды: " + string);
         return block;
-    }
-
-    private static <T extends Enum> Set<Character> getChars(Class<T> enumClass) {
-        Enum[] enumConstants = enumClass.getEnumConstants();
-        Set<Character> chars = new HashSet<>();
-        String lowCase;
-        String upperCase;
-        for (Enum e :enumConstants) {
-            lowCase = e.toString().toLowerCase();
-            upperCase = e.toString().toUpperCase();
-            char[] characters = lowCase.toCharArray();
-            for (char ch: characters) {
-                chars.add(ch);
-            }
-            characters = upperCase.toCharArray();
-            for (char ch: characters) {
-                chars.add(ch);
-            }
-        }
-        return chars;
-    }
-
-    private static String createRegexp(Set<Character> characters) {
-        StringBuilder sb = new StringBuilder("[");
-        characters.forEach(c->sb.append(c));
-        sb.append("]");
-        return sb.toString();
     }
 
     private static Column getColumn(String string) {
@@ -136,5 +101,14 @@ public class Parser {
 
     private static Object getValue(Column column, String string) {
         return column.apply(string);
+    }
+
+    // Возвращают регулярное выражение со значениями наименований столбцов
+    // для использования в качестве паттерна при обработке строк
+    private static <T extends Enum<T>> String getEnumPattern (Class<T> c) {
+        String values = Arrays.stream(c.getEnumConstants())
+                .map(Enum::toString)
+                .collect(Collectors.joining("||"));
+        return "(?i)" + values; // (?i) - флаг "не учитывать регистр при поиске"
     }
 }
