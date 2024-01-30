@@ -1,4 +1,6 @@
-package com.digdes.school;
+package com.digdes.school.parser;
+
+import com.digdes.school.*;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -10,25 +12,35 @@ public class Parser {
             "(FALSE)|(TRUE))'?";
     private static final String FULL_PATTERN = " *'("
             + getEnumPattern(Column.class) + "*)' *("
-            + getEnumPattern(LogicalFilter.class) + "*) *"
+            + getEnumPattern(RelationalOperator.class) + "*) *"
             + VALUES_PATTERN + " *";
-    private static final Pattern blockPattern = Pattern.compile(FULL_PATTERN);
+    private static final Pattern BLOCK_PATTERN = Pattern.compile(FULL_PATTERN);
 
-    public static List<Block> parseBlocks(String string) {
+    public static Map<String, Object> stringToMap(String string) {
         String[] blocks = string.split(",");
         List<Block> values = new ArrayList<>();
         for (String s : blocks) {
             values.add(getBlock(s));
         }
-        return values;
+        if (values.isEmpty())
+            throw new IllegalArgumentException("Ошибка вставки. " +
+                    "Данные не найдены.");
+        User.UserBuilder userBuilder = new User.UserBuilder();
+        for (Block block : values) {
+            if (!block.getRelation().equals(RelationalOperator.EQUALS))
+                throw new IllegalArgumentException("Ошибка вставки. " +
+                        "Данные должны быть в формате 'поле' = значение");
+            userBuilder.addColumn(block.getColumn(), block.getValue());
+        }
+        return userToMap(userBuilder.build());
     }
 
-    public static List<Condition> whereParser(String string) {
+    public static List<Map<String, Object>> parseWhere(Storage storage, String string) {
         List<Condition> conditions = new ArrayList<>();
         String logicalRegexp = " ?" + getEnumPattern(LogicalOperator.class) + "+ ?";
         Pattern logicalPattern = Pattern.compile(logicalRegexp);
         Matcher logicalMatcher;
-        Matcher blockMatcher = blockPattern.matcher(string);
+        Matcher blockMatcher = BLOCK_PATTERN.matcher(string);
         String substring;
         int start;
         int end;
@@ -56,23 +68,15 @@ public class Parser {
             else {
                 condition = new Condition(null, block);
                 conditions.add(condition);
-                return conditions;
+                return getFilteredList(storage, conditions);
                 }
-            blockMatcher = blockPattern.matcher(string);
+            blockMatcher = BLOCK_PATTERN.matcher(string);
         }
-        return conditions;
-    }
-
-    public static String getArgsString(String[] s) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 1; i<s.length; i++) {
-            sb.append(s[i]).append(" ");
-        }
-        return sb.toString();
+        return getFilteredList(storage, conditions);
     }
 
     private static Block getBlock(String string) {
-        Matcher matcher = blockPattern.matcher(string);
+        Matcher matcher = BLOCK_PATTERN.matcher(string);
         boolean isMatches = matcher.matches();
         Block block;
         if (isMatches) {
@@ -80,8 +84,8 @@ public class Parser {
             String operation = matcher.group(2);
             String value = matcher.group(3);
             Column c = getColumn(column);
-            LogicalFilter op = getOperation(operation);
-            Object val = getValue(c, value);
+            RelationalOperator op = getOperation(operation);
+            Object val = stringToValue(c, value);
             block = new Block(c, op, val);
         } else throw new IllegalArgumentException("Ошибка обработки блока команды: " + string);
         return block;
@@ -93,22 +97,39 @@ public class Parser {
         throw new IllegalArgumentException("Неверный тип колонки " + string);
     }
 
-    private static LogicalFilter getOperation(String string) {
-        Optional<LogicalFilter> result = LogicalFilter.fromString(string.toUpperCase());
+    private static RelationalOperator getOperation(String string) {
+        Optional<RelationalOperator> result = RelationalOperator.fromString(string.toUpperCase());
         if (result.isPresent()) return result.get();
         throw new IllegalArgumentException("Неверный тип операции " + string);
     }
 
-    private static Object getValue(Column column, String string) {
+    // Преобразует строку в объект соответствуюшего столбцу типа
+    private static Object stringToValue(Column column, String string) {
         return column.apply(string);
     }
 
-    // Возвращают регулярное выражение со значениями наименований столбцов
+    // Возвращают регулярное выражение со значениями наименований перечисления
     // для использования в качестве паттерна при обработке строк
     private static <T extends Enum<T>> String getEnumPattern (Class<T> c) {
         String values = Arrays.stream(c.getEnumConstants())
                 .map(Enum::toString)
                 .collect(Collectors.joining("||"));
         return "(?i)" + values; // (?i) - флаг "не учитывать регистр при поиске"
+    }
+
+    // Фильтрует полученный из хранилища список пользователей согласно списку условий
+    private static List<Map<String, Object>> getFilteredList(Storage storage, List<Condition> conditions) {
+        List<Map<String, Object>> list = storage.getAll();
+        return Filter.applyConditions(list, conditions);
+    }
+
+    // Преобразует объект User в map для помещения в хранилище
+    private static Map<String, Object> userToMap(User user) {
+        Map<String, Object> map = new HashMap<>();
+        user.getMap().forEach((key1, value) -> {
+            var key = key1.toString();
+            map.put(key, value);
+        });
+        return map;
     }
 }

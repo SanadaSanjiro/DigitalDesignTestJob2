@@ -4,22 +4,21 @@ import java.util.EnumMap;
 import java.util.Map;
 
 // Задает виды дополнительных операторов в запросах
-public enum SubQuery implements Subcommand {
+public enum SubQuery {
     VALUES {
         public String process (String s) {
             String[] args = s.trim().split(" ");
-            if (!args[0].toUpperCase().equals(this.toString()))
+            if (!args[0].equalsIgnoreCase(this.toString())) //Проверка что строка начинается с VALUES
                 throw new IllegalArgumentException("Неверный формат команды. Отсутствует VALUES");
-            return Parser.getArgsString(args);
+            return getArgsString(args);
         }
     },
     WHERE {
         public String process(String s) {
             String[] args = s.trim().split(" ");
-            boolean isThereWhere = args[0].toUpperCase().equals(this.toString());
-            if (!isThereWhere)
+            if (!args[0].equalsIgnoreCase(this.toString())) //Проверка что строка начинается с WHERE
                 throw new IllegalArgumentException("Неверный формат команды. Отсутствует WHERE");
-            return Parser.getArgsString(args);
+            return getArgsString(args);
         }
     };
 
@@ -37,4 +36,15 @@ public enum SubQuery implements Subcommand {
         }
         return result;
     }
+
+    //Пересобираем аргументы, убирая лишние пробелы
+    private static String getArgsString(String[] s) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i<s.length; i++) {
+            sb.append(s[i]).append(" ");
+        }
+        return sb.toString();
+    }
+
+    abstract String process (String s);
 }

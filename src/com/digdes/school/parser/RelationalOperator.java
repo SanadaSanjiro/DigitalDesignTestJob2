@@ -1,4 +1,4 @@
-package com.digdes.school;
+package com.digdes.school.parser;
 
 import java.util.Map;
 import java.util.Objects;
@@ -7,22 +7,22 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
 
-public enum LogicalFilter implements Filter {
+enum RelationalOperator {
     EQUALS("=") {
         @Override
-        public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
+        public <T extends Comparable<? super T>> boolean check(T condition, T value) {
             return !Objects.isNull(value) && value.compareTo(condition)==0;
         }
     },
     NOT_EQUALS("!=") {
         @Override
-        public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
+        public <T extends Comparable<? super T>> boolean check(T condition, T value) {
             return Objects.isNull(value) || value.compareTo(condition)!=0;
         }
     },
     LIKE("LIKE") {
         @Override
-        public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
+        public <T extends Comparable<? super T>> boolean check(T condition, T value) {
             if (Objects.isNull(value)) return false;
             String c = (String) condition;
             String v = (String) value;
@@ -32,7 +32,7 @@ public enum LogicalFilter implements Filter {
     },
     ILIKE("ILIKE") {
         @Override
-        public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
+        public <T extends Comparable<? super T>> boolean check(T condition, T value) {
             if (Objects.isNull(value)) return false;
             String c = (String) condition;
             String v = (String) value;
@@ -42,39 +42,39 @@ public enum LogicalFilter implements Filter {
     },
     MORE_OR_EQUALS(">="){
         @Override
-        public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
+        public <T extends Comparable<? super T>> boolean check(T condition, T value) {
             return !Objects.isNull(value) && value.compareTo(condition)>=0;
         }
     },
-    LESS_OR_EQUAL("<=") {
+    LESS_OR_EQUALS("<=") {
         @Override
-        public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
+        public <T extends Comparable<? super T>> boolean check(T condition, T value) {
             return !Objects.isNull(value) && value.compareTo(condition)<=0;
         }
     },
     MORE(">"){
         @Override
-        public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
+        public <T extends Comparable<? super T>> boolean check(T condition, T value) {
             return !Objects.isNull(value) && value.compareTo(condition)>0;
         }
     },
     LESS("<"){
         @Override
-        public <T extends Comparable<? super T>> boolean applyFilter(T condition, T value) {
+        public <T extends Comparable<? super T>> boolean check(T condition, T value) {
             return !Objects.isNull(value) && value.compareTo(condition)<0;
         }
     };
 
     private final String OP_STRING;
 
-    LogicalFilter(String s) {
+    RelationalOperator(String s) {
         OP_STRING = s;
     }
 
-    private static final Map<String, LogicalFilter> stringToEnum = Stream.of(values()).collect(
+    private static final Map<String, RelationalOperator> stringToEnum = Stream.of(values()).collect(
             toMap(Object::toString, e->e));
 
-    public static Optional<LogicalFilter> fromString(String s) {
+    static Optional<RelationalOperator> fromString(String s) {
         return Optional.ofNullable(stringToEnum.get(s));
     }
 
@@ -82,4 +82,6 @@ public enum LogicalFilter implements Filter {
     public String toString() {
         return OP_STRING;
     }
+
+    abstract <T extends Comparable<? super T>> boolean check(T condition, T value);
 }

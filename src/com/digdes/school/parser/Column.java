@@ -1,16 +1,14 @@
-package com.digdes.school;
+package com.digdes.school.parser;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
 
 // ENUM, задающий допустимые наименования столбцов и типы их значений
-public enum Column {
+enum Column {
     ID(Long.class, Long::parseLong),
     LASTNAME(String.class, x-> x),
     AGE(Long.class, Long::parseLong),
@@ -28,21 +26,21 @@ public enum Column {
         this.function = f;
     }
 
-    public Class<?> getColumnClass() {
+    Class<?> getColumnClass() {
         return this.columnClass;
     }
 
-    public static Optional<Column> fromString(String s) {
+    static Optional<Column> fromString(String s) {
         return Optional.ofNullable(stringToEnum.get(s.toUpperCase()));
     }
 
     // Преобразует строку в объект с типом данных столбца
-    public Object apply(String val) {
+    Object apply(String val) {
         return function.apply(val);
     }
 
     // Приводит объект к типу, соответствующему типу данных столбца
-    public static <T extends Comparable<? super T>> T castValue(Column column, Object val) {
+    static <T extends Comparable<? super T>> T castValue(Column column, Object val) {
         @SuppressWarnings("unchecked")
         Class<T> type = (Class<T>) column.getColumnClass();
         return type.cast(val);

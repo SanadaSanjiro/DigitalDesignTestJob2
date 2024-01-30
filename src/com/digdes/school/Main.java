@@ -9,24 +9,18 @@ public class Main {
         String[] requests = { "Insert VALUES  'lastName' = 'Федоров' , 'id'=3, 'age'=40, 'active'=TRUE",
                               "Insert VALuES  'lastName' = 'Петров' , 'id'=3, 'age'=30, 'active'=FALSE, 'cost'=10.1",
                               "Insert VALuES  'lastName' = 'Васечкин' , 'id'=2, 'age'=20, 'active'=false, 'cost' = 0.5",
-                              "Insert VALuES  'lastName' = 'Иванов' , 'age'=35, 'active'=true, 'cost'=3.0 "};
+                              "Insert VALuES   'lastName'  =  'Иванов'    , 'age'=35,   'active'=true,    'cost'=3.0 "};
         List<Map<String, Object>> list;
         for (String request: requests) {
             try {
-                list = jvs.execute(request);
-                list.forEach(m-> System.out.println(m));
+                jvs.execute(request);
             } catch (Exception e) {
-                System.out.println(e);
+                e.printStackTrace();
             }
         }
         System.out.println(System.lineSeparator());
-        System.out.println("Лист после вставки строк");
-        try {
-            list = jvs.execute("select");
-            list.forEach(m-> System.out.println(m));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        System.out.println("В базу добавлены следующие позиции:");
+        select(jvs);
         /*
         list.forEach(m-> System.out.println(m));
         List<Block> blocks =  Parser.parseBlocks("'lastName' like '%ин'");
@@ -41,17 +35,35 @@ public class Main {
             System.out.println(e.getMessage());
         }
          */
-        System.out.println(System.lineSeparator());
 
         try {
-            list = jvs.execute("select where 'lastname' LIKE '%сечки%' and 'active' = false and 'id' = 2");
-            System.out.println("Результат запроса:");
-            list.forEach(m-> System.out.println(m));
+            String query = "select where 'lastname' LIKE '%сечки%' and 'active' = false and 'id' = 2";
+            System.out.println("Результат запроса: " + query);
+            list = jvs.execute(query);
+            list.forEach(System.out::println);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e.getMessage());
         }
 
+        try {
+            String query = "delete where 'lastname' LIKE '%сечки%' and 'active' = false and 'id' = 2";
+            System.out.println("Результат запроса: " + query);
+            list = jvs.execute(query);
+            list.forEach(System.out::println);
+            System.out.println("Список после удаления: ");
+            select(jvs);
+
+            query = "delete where 'id' = 3";
+            System.out.println("Результат запроса: " + query);
+            list = jvs.execute(query);
+            list.forEach(System.out::println);
+            System.out.println("Список после удаления: ");
+            select(jvs);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
 
         /*
         System.out.println(Parser.whereParser("WHERE 'age'>=30 and 'id'=3"));
@@ -142,5 +154,15 @@ public class Main {
         for(Column column: Column.values()) {
             System.out.println(column + ": " + map.get(column));
         }*/
+    }
+
+    private static void select (JavaSchoolStarter jvs) {
+        try {
+            List<Map<String, Object>> list;
+            list = jvs.execute("select");
+            list.forEach(System.out::println);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

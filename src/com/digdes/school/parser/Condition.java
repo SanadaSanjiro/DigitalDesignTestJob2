@@ -1,18 +1,18 @@
-package com.digdes.school;
+package com.digdes.school.parser;
 
-public class Condition {
+class Condition {
     private final LogicalOperator logical;
     private final Block block;
-    public Condition(LogicalOperator lo, Block b) {
+    Condition(LogicalOperator lo, Block b) {
         logical = lo;
         block = b;
     }
 
-    public LogicalOperator getLogical() {
+    LogicalOperator getLogical() {
         return logical;
     }
 
-    public Block getBlock() {
+    Block getBlock() {
         return block;
     }
 
