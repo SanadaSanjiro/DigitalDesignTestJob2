@@ -58,6 +58,8 @@ public enum Query {
             return null;
         }
     };
+    private static final Map<String, Query> stringToEnum = Stream.of(values()).collect(
+            toMap(Object::toString, e->e));
 
     public static List<Map<String, Object>> processQuery(Storage storage, String request) {
         String[] splitReq = request.trim().split(" ");
@@ -68,12 +70,9 @@ public enum Query {
         return query.execute(storage, request);
     }
 
-    private static Optional<Query> fromString(String s) {
+    public static Optional<Query> fromString(String s) {
         return Optional.ofNullable(stringToEnum.get(s.toUpperCase()));
     }
-
-    private static final Map<String, Query> stringToEnum = Stream.of(values()).collect(
-            toMap(Object::toString, e->e));
 
     abstract List<Map<String, Object>> execute(Storage storage, String args);
 }
