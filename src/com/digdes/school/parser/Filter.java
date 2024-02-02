@@ -2,59 +2,45 @@ package com.digdes.school.parser;
 
 import java.util.*;
 
+import static java.util.Objects.isNull;
+
 // Обеспечивает фильтрацию списка пользователей по списку условий
 class Filter {
     static List<Map<String, Object>> applyConditions(List<Map<String, Object>> userList,
                                                             List<Condition> condList) {
-        Iterator<Condition> iterator = condList.iterator();
-        return processLogical(userList, userList, iterator);
+        List<Map<String, Object>> result = new ArrayList<>();
+        Iterator<Condition> iterator;
+        for (Map<String, Object> user : userList) {
+            iterator = condList.iterator();
+            if (isCompliant(iterator, user)) {
+                System.out.println("Пользователь " + user + " удовлетворяет условиям");
+                result.add(user);
+            }
+        }
+        return result;
     }
 
-    // Рекурсивно применяет цепочку фильтров к списку пользователей
-    private static List<Map<String, Object>> processLogical(
-            List<Map<String, Object>> allUsers,
-            List<Map<String, Object>> filteredUsers,
-            Iterator<Condition> iterator)
-    {
+    private static boolean isCompliant(Iterator<Condition> iterator, Map<String, Object> user) {
         Condition condition = iterator.next();
         Block block = condition.getBlock();
         LogicalOperator lo = condition.getLogical();
-        List<Map<String, Object>> result = filterList(filteredUsers, block);
+        boolean result;
         if (Objects.isNull(lo)) {
-            return result;
+            System.out.println("Для пользователя: " + user);
+            result = checkCondition(block, user);
+        } else {
+            result = lo.apply(checkCondition(block, user), isCompliant(iterator, user));
         }
-        if (lo.equals(LogicalOperator.OR)) {
-            result = joinLists(filteredUsers, processLogical(allUsers, allUsers, iterator));
-        }
-        if (lo.equals(LogicalOperator.AND)) {
-            result = processLogical(allUsers, result, iterator);
-        }
+        System.out.println("результат обработки блока " + block + ": " + result);
         return result;
     }
 
-    // Фильтрует список в соответствии с полученными оператором и значнеием
-    private static <T extends Comparable<T>> List<Map<String, Object>>
-    filterList(List<Map<String, Object>> list, Block block)
-    {
-        List<Map<String, Object>> result = new ArrayList<>();
+    private static <T extends Comparable<T>>
+    boolean checkCondition(Block block, Map<String, Object> user) {
         Column column = block.getColumn();
         T condition = Column.castValue(column, block.getValue());
         RelationalOperator relation = block.getRelation();
-        for (Map<String, Object> map : list) {
-            T value = Column.castValue(column, map.get(column.toString()));
-            if (relation.check(condition, value)) result.add(map);
-        }
-        return result;
-    }
-
-    // Объединяет два списка без дублирования значений
-    private static List<Map<String, Object>> joinLists(List<Map<String, Object>> list1, List<Map<String, Object>>list2)
-    {
-        for (Map<String, Object> map : list2) {
-            if (!list1.contains(map)) {
-                list1.add(map);
-            }
-        }
-        return list1;
+        T value = Column.castValue(column, user.get(column.toString()));
+        return relation.check(condition, value);
     }
 }

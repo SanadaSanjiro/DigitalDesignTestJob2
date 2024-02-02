@@ -8,6 +8,7 @@ public class Storage {
     private final List<Map<String, Object>> list = new ArrayList<>();
     public List<Map<String, Object>> add(Map<String, Object> user) {
         List<Map<String, Object>> result = new ArrayList<>();
+        list.add(user);
         result.add(user);
         return result;
     }

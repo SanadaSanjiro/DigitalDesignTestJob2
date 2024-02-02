@@ -2,6 +2,7 @@ package com.digdes.school;
 
 import com.digdes.school.parser.Parser;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -55,7 +56,16 @@ public enum Query {
     UPDATE {
         @Override
         List<Map<String, Object>> execute(Storage storage, String args) {
-            return null;
+            Map<SubQuery, String> subQueries = SubQuery.processSubQuery(args);
+            List<Map<String, Object>> result;
+            result = subQueries.containsKey(SubQuery.WHERE) ?
+                    Parser.parseWhere(storage, subQueries.get(SubQuery.WHERE)) : storage.getAll();
+            args = subQueries.get(SubQuery.VALUES);
+            Map<String, Object> newValues = Parser.stringToMap(args);
+            for (Map<String, Object> user : result) {
+                newValues.entrySet().forEach((e) -> user.put(e.getKey(), e.getValue()));
+            }
+            return result;
         }
     };
     private static final Map<String, Query> stringToEnum = Stream.of(values()).collect(

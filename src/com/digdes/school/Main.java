@@ -21,6 +21,18 @@ public class Main {
         System.out.println(System.lineSeparator());
         System.out.println("В базу добавлены следующие позиции:");
         select(jvs);
+        try {
+            String query = "update values 'lastname' = 'пидорас' where 'age' = 35 or 'id' = 2 and 'active' = false";
+            System.out.println("Результат запроса: " + query);
+            list = jvs.execute(query);
+            list.forEach(System.out::println);
+            System.out.println("Список после обновления: ");
+            select(jvs);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+
         /*
         list.forEach(m-> System.out.println(m));
         List<Block> blocks =  Parser.parseBlocks("'lastName' like '%ин'");
@@ -34,10 +46,9 @@ public class Main {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-         */
 
-        try {
-            String query = "select where 'lastname' LIKE '%сечки%' and 'active' = false and 'id' = 2";
+         try {
+            String query = "select where 'age' = 35 or 'id' = 3";
             System.out.println("Результат запроса: " + query);
             list = jvs.execute(query);
             list.forEach(System.out::println);
@@ -45,7 +56,6 @@ public class Main {
             e.printStackTrace();
             System.out.println(e.getMessage());
         }
-
         try {
             String query = "delete where 'lastname' LIKE '%сечки%' and 'active' = false and 'id' = 2";
             System.out.println("Результат запроса: " + query);
@@ -65,10 +75,9 @@ public class Main {
             System.out.println(e.getMessage());
         }
 
-        /*
+
         System.out.println(Parser.whereParser("WHERE 'age'>=30 and 'id'=3"));
 
-        /*
         int[] numbers = {1,2,3,4,5};
         for(LogicalFilter filter : LogicalFilter.values()) {
             for (int i : numbers) {
@@ -93,7 +102,6 @@ public class Main {
             }
         }
 
-        /*
         String[] testStings = {
                 "%Жопа 123%",
                 "Жопа 123%",
@@ -141,8 +149,7 @@ public class Main {
             }
             if (s.trim().toLowerCase().equals("exit"))
                 break;
-        }*/
-        /*
+        }
         User user = new User.UserBuilder()
                 //.addColumn(Column.ID, Long.valueOf(1))
                 .addColumn(Column.LASTNAME, "Вася")

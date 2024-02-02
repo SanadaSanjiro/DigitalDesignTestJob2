@@ -111,10 +111,10 @@ public class Parser {
     // Возвращают регулярное выражение со значениями наименований перечисления
     // для использования в качестве паттерна при обработке строк
     private static <T extends Enum<T>> String getEnumPattern (Class<T> c) {
-        String values = Arrays.stream(c.getEnumConstants())
+        String result = Arrays.stream(c.getEnumConstants())
                 .map(Enum::toString)
-                .collect(Collectors.joining("||"));
-        return "(?i)" + values; // (?i) - флаг "не учитывать регистр при поиске"
+                .collect(Collectors.joining("|"));
+        return "(?i)" + result; // (?i) - флаг "не учитывать регистр при поиске"
     }
 
     // Фильтрует полученный из хранилища список пользователей согласно списку условий
