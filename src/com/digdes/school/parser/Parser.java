@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class Parser {
     private static final String VALUES_PATTERN = "(?i)'?((\\d+\\.?\\d*)|('[%\\wа-яА-ЯёЁ-]+')|" +
-            "(FALSE)|(TRUE))'?";
+            "(FALSE)|(TRUE)|(NULL)'?";
     private static final String FULL_PATTERN = " *'("
             + getEnumPattern(Column.class) + "*)' *("
             + getEnumPattern(RelationalOperator.class) + "*) *"
@@ -120,7 +120,7 @@ public class Parser {
     // Фильтрует полученный из хранилища список пользователей согласно списку условий
     private static List<Map<String, Object>> getFilteredList(Storage storage, List<Condition> conditions) {
         List<Map<String, Object>> list = storage.getAll();
-        return Filter.applyConditions(list, conditions);
+        return LogicalOperator.applyConditions(list, conditions);
     }
 
     // Преобразует объект User в map для помещения в хранилище

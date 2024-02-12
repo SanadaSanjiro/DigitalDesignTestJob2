@@ -22,7 +22,7 @@ public class Main {
         System.out.println("В базу добавлены следующие позиции:");
         select(jvs);
         try {
-            String query = "update values 'lastname' = 'пидорас' where 'age' = 35 or 'id' = 2 and 'active' = false";
+            String query = "update values 'lastname' = 'пидорас' where 'active' = true and 'id' > 5 or 'lastname' iLike '%ов' or 'age' <= 40 and 'cost' >10";
             System.out.println("Результат запроса: " + query);
             list = jvs.execute(query);
             list.forEach(System.out::println);
@@ -33,6 +33,17 @@ public class Main {
             System.out.println(e.getMessage());
         }
 
+        try {
+            String query = "select where 'id' != 0";
+            System.out.println("Результат запроса: " + query);
+            list = jvs.execute(query);
+            list.forEach(System.out::println);
+            System.out.println("Список после обновления: ");
+            select(jvs);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
         /*
         list.forEach(m-> System.out.println(m));
         List<Block> blocks =  Parser.parseBlocks("'lastName' like '%ин'");
