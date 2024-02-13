@@ -2,10 +2,7 @@ package com.digdes.school;
 
 import com.digdes.school.parser.Parser;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
@@ -22,6 +19,12 @@ public enum Query {
                 throw new IllegalArgumentException("Ошибка запроса Insert. " +
                         "Параметр WHERE недопустим в данном контексте");
             args = subQueries.get(SubQuery.VALUES);
+            Map<String, Object> user = Parser.stringToMap(args);
+            for (Object value : user.values()) {
+                if (Objects.isNull(value))
+                    throw new IllegalArgumentException(
+                            "Значение поля при добавлении пользователя не может быть null!");
+            }
             return storage.add(Parser.stringToMap(args));
         }
     },
@@ -63,7 +66,12 @@ public enum Query {
             args = subQueries.get(SubQuery.VALUES);
             Map<String, Object> newValues = Parser.stringToMap(args);
             for (Map<String, Object> user : result) {
-                newValues.entrySet().forEach((e) -> user.put(e.getKey(), e.getValue()));
+                newValues.entrySet().forEach((e) -> {
+                    if (Objects.isNull(e.getValue())) user.remove(e.getKey());
+                    else user.put(e.getKey(), e.getValue());
+                });
+                if (user.size() == 0 ) throw new IllegalArgumentException(
+                        "В результате операции удаляются все значения пользователя!");
             }
             return result;
         }

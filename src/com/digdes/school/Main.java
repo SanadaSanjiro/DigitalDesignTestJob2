@@ -2,7 +2,13 @@ package com.digdes.school;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Scanner;
 
+/**
+ * Класс для тестирования основного кода.
+ * Не требуется для корректной работы остальных классов.
+ */
 public class Main {
     public static void main(String[] args) {
         JavaSchoolStarter jvs = new JavaSchoolStarter();
@@ -18,6 +24,21 @@ public class Main {
                 e.printStackTrace();
             }
         }
+
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            String s = scanner.nextLine();
+            try {
+                list = jvs.execute(Objects.requireNonNull(s, "Пустой аргумент!"));
+                list.forEach(System.out::println);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (s.trim().equalsIgnoreCase("exit"))
+                break;
+        }
+
+        /*
         System.out.println(System.lineSeparator());
         System.out.println("В базу добавлены следующие позиции:");
         select(jvs);
@@ -44,6 +65,32 @@ public class Main {
             e.printStackTrace();
             System.out.println(e.getMessage());
         }
+
+        try {
+            String query = "update values 'id' = null, 'lastname' = null, 'active' = null";
+            System.out.println("Результат запроса: " + query);
+            list = jvs.execute(query);
+            list.forEach(System.out::println);
+            System.out.println("Список после обновления: ");
+            select(jvs);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+
+
+        try {
+            String query = "Insert VALUES  'lastName' = null , 'id'=3, 'age'=40, 'active'=TRUE";
+            System.out.println("Результат запроса: " + query);
+            list = jvs.execute(query);
+            list.forEach(System.out::println);
+            System.out.println("Список после обновления: ");
+            select(jvs);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+
         /*
         list.forEach(m-> System.out.println(m));
         List<Block> blocks =  Parser.parseBlocks("'lastName' like '%ин'");
@@ -146,34 +193,10 @@ public class Main {
         list.forEach(c -> System.out.println(c));
 
         List<Block> blocks =  Parser.valuesParser("'lastName' = 'Федоров' , 'id'=3, 'age'=40, 'active'=true");
-        blocks.forEach(b-> System.out.println(b));*/
-
-        /*String s;
-        JavaSchoolStarter jsc = new JavaSchoolStarter();
-        Scanner scanner = new Scanner(System.in);+
-        while (true) {
-            s = scanner.nextLine();
-            try {
-                jsc.execute(Objects.requireNonNull(s.toString(), "Пустой аргумент!"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if (s.trim().toLowerCase().equals("exit"))
-                break;
-        }
-        User user = new User.UserBuilder()
-                //.addColumn(Column.ID, Long.valueOf(1))
-                .addColumn(Column.LASTNAME, "Вася")
-                .addColumn(Column.AGE, Long.valueOf(30))
-                .addColumn(Column.COST, Double.valueOf(2.5))
-                .addColumn(Column.ACTIVE, Boolean.valueOf(true))
-                .build();
-        Map<Column, Object> map = user.getMap();
-        for(Column column: Column.values()) {
-            System.out.println(column + ": " + map.get(column));
-        }*/
+        blocks.forEach(b-> System.out.println(b));**/
     }
 
+    // Методя для вывода всего содержимого базы на консоль
     private static void select (JavaSchoolStarter jvs) {
         try {
             List<Map<String, Object>> list;

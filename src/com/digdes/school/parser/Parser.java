@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class Parser {
     private static final String VALUES_PATTERN = "(?i)'?((\\d+\\.?\\d*)|('[%\\wа-яА-ЯёЁ-]+')|" +
-            "(FALSE)|(TRUE)|(NULL)'?";
+            "(FALSE)|(TRUE)|(NULL))'?";
     private static final String FULL_PATTERN = " *'("
             + getEnumPattern(Column.class) + "*)' *("
             + getEnumPattern(RelationalOperator.class) + "*) *"
@@ -85,7 +85,7 @@ public class Parser {
             String value = matcher.group(3);
             Column c = getColumn(column);
             RelationalOperator op = getOperation(operation);
-            Object val = stringToValue(c, value);
+            Object val = value.toUpperCase().equals("NULL") ? null : stringToValue(c, value);
             block = new Block(c, op, val);
         } else throw new IllegalArgumentException("Ошибка обработки блока команды: " + string);
         return block;
