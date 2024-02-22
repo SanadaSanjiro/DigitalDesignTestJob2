@@ -1,9 +1,13 @@
 package com.digdes.school.parser;
 
+/**
+ * Промежуточный класс, используемый для обработки данных столбцов таблицы при создании новых записей и фильтрации
+ * существующих.
+ */
 class Block {
-    private final Column column;
-    private final Object value;
-    private final RelationalOperator relation;
+    private final Column column;                        // Столбец таблицы
+    private final Object value;                         // Значение столбца
+    private final RelationalOperator relation;          // Оператор отношения (больше, равно, похоже и т.п.)
     Block(Column c, RelationalOperator op, Object obj) {
         column = c;
         value = obj;

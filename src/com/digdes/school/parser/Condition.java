@@ -1,5 +1,10 @@
 package com.digdes.school.parser;
 
+
+/**
+ * Промежуточный класс, используемый при фильтрации записей. Объект состоит из блока условия, применяемого к столбцу и
+ * логического оператора (может быть null)
+ */
 class Condition {
     private final LogicalOperator logical;
     private final Block block;

@@ -3,8 +3,10 @@ package com.digdes.school.parser;
 import java.util.HashMap;
 import java.util.Map;
 
-//Промежуточный класс с данными сотрудника
-//Используется для парсинга строк, предоставляя заполненный Map для последующей обработки и внесения в базу
+/**
+ * Промежуточный класс с данными сотрудника. Используется для парсинга строк, предоставляя заполненный Map
+ * для последующей обработки и внесения в базу
+ */
 class User {
     private final Map<Column, Object> map;
     static class UserBuilder
@@ -27,5 +29,4 @@ class User {
     private User(UserBuilder builder) {
         this.map = builder.temporaryMap;
     }
-
 }

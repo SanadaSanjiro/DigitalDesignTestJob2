@@ -7,6 +7,9 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
 
+/**
+ * Перечисление, содержащее операции отношения и методы сравнения с их использованием
+ */
 enum RelationalOperator {
     EQUALS("=") {
         @Override
@@ -65,15 +68,22 @@ enum RelationalOperator {
         }
     };
 
+    // Строковое представление операции
     private final String OP_STRING;
 
     RelationalOperator(String s) {
         OP_STRING = s;
     }
 
+    // Используется для преобразования строк в экземпляры перечисления
     private static final Map<String, RelationalOperator> stringToEnum = Stream.of(values()).collect(
             toMap(Object::toString, e->e));
 
+    /**
+     * Преобразует строку в элемент перечисления
+     * @param s Строковое представление перечисления. Может быть как в верхнем, так и в нижнем регистре
+     * @return Возвращает объект перечисления (операцию отношения)
+     */
     static Optional<RelationalOperator> fromString(String s) {
         return Optional.ofNullable(stringToEnum.get(s));
     }
@@ -83,5 +93,13 @@ enum RelationalOperator {
         return OP_STRING;
     }
 
+    /**
+     * Абстрактный метод, описывающий сравнение двух значений с помощью экземпляра перечисления
+     * @param condition условие, с которым выполняется сравнение
+     * @param value значение, которое будет сравниваться с условием
+     * @return возвращает TRUE, если условие выполнено
+     * @param <T> класс, расширяющий интерфейс Comparable (предполагается один из типов данных,
+     *           используемых в столбцах талбицы.
+     */
     abstract <T extends Comparable<? super T>> boolean check(T condition, T value);
 }
