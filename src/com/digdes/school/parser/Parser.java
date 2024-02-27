@@ -67,7 +67,7 @@ public class Parser {
     public static List<Map<String, Object>> parseWhere(Storage storage, String string) {
         List<Condition> conditions = new ArrayList<>();               //список условий (блок + логический оператор)
         String logicalRegexp = " ?" + getEnumPattern(LogicalOperator.class) + "+ ?"; // шаблон логического оператора
-        String substring = "";
+        String substring;
         Pattern logicalPattern = Pattern.compile(logicalRegexp);
         Matcher logicalMatcher;
         Matcher blockMatcher = BLOCK_PATTERN.matcher(string);
@@ -82,7 +82,7 @@ public class Parser {
             if (logicalMatcher.find()) {                           // если находим - добавляем в цепочку
                 substring = getSubstring(logicalMatcher, string);
                 optional = LogicalOperator.fromString(substring);
-                if (!optional.isPresent()) throw new IllegalArgumentException("Ошибка в обработке условий");
+                if (optional.isEmpty()) throw new IllegalArgumentException("Ошибка в обработке условий");
                 conditions.add(new Condition(optional.get(), block));
                 string = string.replaceFirst(substring, "");
             }

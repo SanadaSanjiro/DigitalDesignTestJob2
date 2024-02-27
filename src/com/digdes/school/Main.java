@@ -27,6 +27,7 @@ public class Main {
                 e.printStackTrace();
             }
         }
+        select(jvs);
 
         // Принимает команды с консоли, построчно выводит результаты исполнения команды
         Scanner scanner = new Scanner(System.in);
