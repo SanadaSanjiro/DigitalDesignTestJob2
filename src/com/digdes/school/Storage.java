@@ -49,7 +49,7 @@ public class Storage {
     }
 
     /**
-     * Метод возвращает список со всеми записями таблицы
+     * Метод возвращает список со всеми записями таблицы.
      * @return список со всеми записями в формате List<Map<String, Object>>
      */
     public List<Map<String, Object>> getAll() {
